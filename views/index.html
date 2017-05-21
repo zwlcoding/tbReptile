@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>淘宝评论爬虫</title>
+</head>
+<body>
+
+
+<div>
+    <a href="./download">下载</a>
+</div>
+
+<div>
+    <label for="url">
+        淘宝链接
+        <textarea id="url" cols="30" rows="10"></textarea>
+    </label>
+    <button style="width: 200px;" id="submit" onclick="getComment()">提交</button>
+</div>
+
+<div id="info"></div>
+
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    (function ($) {
+        $.getUrlParam = function (param, url) {
+            var urls = url || window.location;
+            var reg = new RegExp('(^|&)' + param + '=([^&]*)(&|$)');
+            var r = urls.split('?')[1].substr(1).match(reg);
+            if (r !== null) {
+                return decodeURIComponent(r[2]);
+            }
+            return null;
+        }
+    })(jQuery);
+</script>
+<script>
+    function getComment(){
+        var url = $("#url").val()
+        if( $.trim(url) == ''){
+            alert('请输入淘宝链接')
+            return false
+        }
+
+        var id = $.getUrlParam('id', url)
+        if( !id ){
+            alert('没有找到商品ID')
+            return false
+        }
+
+        console.log(id)
+
+
+        $("#submit").attr({"disabled":"disabled"})
+        $("#info").text('处理中')
+
+        $.ajax({
+            type:'GET',
+            url:'/getComment/' + id,
+        }).done(function(re){
+            $("#info").text( id + '已完成')
+            $("#submit").removeAttr("disabled");
+        }).fail(function(err){
+            alert('接口出错了')
+        })
+
+    }
+</script>
+</body>
+</html>
